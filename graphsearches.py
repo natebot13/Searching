@@ -64,16 +64,18 @@ class terrain:
     return self.nodes[i]
 
 class searcher:
-  queue = set()
+  queue = []
   target = None
   def init(s, t):
     s.prev = None
     searcher.queue = [s]
     searcher.target = t
+    searcher.level = set()
 
   def bfs():
-    level = set()
-    while searcher.queue:
+    if searcher.queue is None or searcher.level is None:
+      return
+    if searcher.queue:
       n = searcher.queue.pop()
       n.visit()
       if n is searcher.target:
@@ -81,21 +83,40 @@ class searcher:
         while n.prev:
           n = n.prev
           n.setOnPath()
-        searcher.queue = set()
+        searcher.queue = None
+        searcher.level = None
         return;
       for each in n.neighbors:
         if not each.visited:
-          level.add(each)
+          searcher.level.add(each)
           each.prev = n
-    searcher.queue = level
+    else:
+      searcher.queue = [n for n in searcher.level]
+      searcher.level = set()
+
+  def dfs():
+    if searcher.queue:
+      n = searcher.queue.pop()
+      n.visit()
+      if n is searcher.target:
+        n.setOnPath()
+        while n.prev:
+          n = n.prev
+          n.setOnPath()
+        searcher.queue = []
+      for each in n.neighbors:
+        if not each.visited:
+          searcher.queue.append(each)
+          each.prev = n
 
 
-def main(search=searcher.bfs):
+
+def main(search=searcher.dfs):
   WIDTH = 500
   HEIGHT = 500
   SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
   CLOCK = pygame.time.Clock()
-  FPS = 2
+  FPS = 40
 
   pairings = []
   with open('pairings.txt', 'r') as p:
