@@ -2,18 +2,18 @@ def generate_square_grid_graph(n):
   w = int(n**0.5)
   for y in range(w):
     for x in range(y * w, y * w + w - 1):
-      yield (x, x + 1)
+      yield (x, x + 1, 1)
   for y in range(w - 1):
     for x in range(y * w, y * w + w):
-      yield (x, x + w)
+      yield (x, x + w, 1)
 
 types = {'grid': generate_square_grid_graph}
 
 def create_file(f, n):
   with open('pairings.txt', 'w') as pfile:
     pfile.write(str(n) + '\n')
-    for a, b in f(n):
-      pfile.write(str(a) + ',' + str(b) + '\n')
+    for a, b, c in f(n):
+      pfile.write(str(a) + ',' + str(b) + ',' + str(c) + '\n')
 
 def main():
   running = True
@@ -33,7 +33,8 @@ def main():
           print('File created.')
           NaN = False
           running = False
-        except ValueError:
+        except ValueError as e:
+          print(e)
           print('Not a number.')
     else:
       print('Invalid option. Try again.')
